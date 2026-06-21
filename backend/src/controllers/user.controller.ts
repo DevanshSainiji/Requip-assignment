@@ -98,6 +98,21 @@ export class UserController {
       next(error);
     }
   };
+
+  /**
+   * Retrieves overall statistics for the dashboard.
+   */
+  getStats = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await userService.getStats();
+      res.status(200).json({
+        success: true,
+        data: stats,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const userController = new UserController();

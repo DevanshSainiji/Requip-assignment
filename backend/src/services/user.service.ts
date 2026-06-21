@@ -86,6 +86,13 @@ export class UserService {
       throw new NotFoundError('User not found');
     }
   }
+
+  /**
+   * Retrieves overall statistics for users.
+   */
+  async getStats() {
+    return userRepository.getStats();
+  }
 }
 
 export const userService = new UserService();

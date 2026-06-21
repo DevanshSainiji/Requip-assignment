@@ -119,6 +119,43 @@ router.post('/', validate(createUserSchema), userController.create);
  */
 router.get('/', validateQuery(paginationQuerySchema), userController.getList);
 
+// ── GET /users/stats ─────────────────────────────────────────────────────────────
+
+/**
+ * @swagger
+ * /users/stats:
+ *   get:
+ *     summary: Retrieve overall user statistics
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalUsers:
+ *                       type: integer
+ *                       example: 150
+ *                     activeUsers:
+ *                       type: integer
+ *                       example: 145
+ *                     deletedUsers:
+ *                       type: integer
+ *                       example: 5
+ *                     recentUsers:
+ *                       type: integer
+ *                       example: 12
+ */
+router.get('/stats', userController.getStats);
+
 // ── GET /users/:id ─────────────────────────────────────────────────────────────
 
 /**

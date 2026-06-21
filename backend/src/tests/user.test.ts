@@ -295,7 +295,20 @@ describe('GET /users', () => {
 
 // ─── 5. GET /users/:id ───────────────────────────────────────────────────────
 
-describe('GET /users/:id', () => {
+  describe('GET /api/v1/users/stats', () => {
+    it('should return statistics with 200 status', async () => {
+      const response = await request(app).get('/api/v1/users/stats');
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toHaveProperty('totalUsers');
+      expect(response.body.data).toHaveProperty('activeUsers');
+      expect(response.body.data).toHaveProperty('deletedUsers');
+      expect(response.body.data).toHaveProperty('recentUsers');
+    });
+  });
+
+  describe('GET /api/v1/users/:id', () => {
   it('returns the user when ID is valid and user is active', async () => {
     const createRes = await post('/users', nextUser());
     const userId: number = createRes.body.data.id;

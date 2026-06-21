@@ -101,6 +101,42 @@ export class UserRepository {
     });
     return count;
   }
+
+  /**
+   * Get overall user statistics.
+   * Recent users are defined as created in the last 30 days.
+   */
+  async getStats() {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const [totalUsers, deletedUsers, recentUsers] = await Promise.all([
+      prisma.user.count(),
+      prisma.user.count({
+        where: {
+          deletedAt: {
+            not: null,
+          },
+        },
+      }),
+      prisma.user.count({
+        where: {
+          createdAt: {
+            gte: thirtyDaysAgo,
+          },
+        },
+      }),
+    ]);
+
+    const activeUsers = totalUsers - deletedUsers;
+
+    return {
+      totalUsers,
+      activeUsers,
+      deletedUsers,
+      recentUsers,
+    };
+  }
 }
 
 export const userRepository = new UserRepository();

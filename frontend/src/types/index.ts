@@ -22,3 +22,10 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface UserStats {
+  totalUsers: number;
+  activeUsers: number;
+  deletedUsers: number;
+  recentUsers: number;
+}
