@@ -25,18 +25,18 @@ export function Dashboard() {
             <Skeleton className="h-32 w-full rounded-2xl" />
             <Skeleton className="h-32 w-full rounded-2xl" />
           </>
-        ) : stats ? (
+        ) : (
           <>
             <StatCard 
               title="Total Users" 
-              value={stats.totalUsers} 
+              value={stats?.totalUsers || 0} 
               subtitle="All time users"
               icon={<Users className="h-5 w-5" />}
               iconWrapperClass="bg-copper-100 text-copper-600"
             />
             <StatCard 
               title="Active Users" 
-              value={stats.activeUsers} 
+              value={stats?.activeUsers || 0} 
               subtitle="from last 30 days"
               icon={<UserCheck className="h-5 w-5" />} 
               iconWrapperClass="bg-emerald-100 text-emerald-600"
@@ -44,7 +44,7 @@ export function Dashboard() {
             />
             <StatCard 
               title="Deleted Users" 
-              value={stats.deletedUsers} 
+              value={stats?.deletedUsers || 0} 
               subtitle="from last 30 days"
               icon={<UserMinus className="h-5 w-5" />} 
               iconWrapperClass="bg-rose-100 text-rose-600"
@@ -52,17 +52,17 @@ export function Dashboard() {
             />
             <StatCard 
               title="Recent Users" 
-              value={stats.recentUsers} 
+              value={stats?.recentUsers || 0} 
               subtitle="Last 30 days"
               icon={<Activity className="h-5 w-5" />} 
               iconWrapperClass="bg-blue-100 text-blue-600"
             />
           </>
-        ) : null}
+        )}
       </div>
 
       {/* Recent Users Section */}
-      <div className="space-y-4">
+      <div className="space-y-4 pt-8">
         <h2 className="font-heading text-xl font-semibold text-slate-900">Recent Users</h2>
         
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft">
@@ -99,8 +99,12 @@ export function Dashboard() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
-                      No users found.
+                    <td colSpan={4} className="px-6 py-16 text-center text-slate-500">
+                      <div className="flex flex-col items-center justify-center">
+                        <Users className="h-8 w-8 text-slate-300 mb-3" />
+                        <p className="font-medium text-slate-900">No recent users</p>
+                        <p className="text-sm">Wait for new registrations.</p>
+                      </div>
                     </td>
                   </tr>
                 )}
