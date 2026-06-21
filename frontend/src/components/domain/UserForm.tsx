@@ -2,21 +2,26 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { Button } from '@/components/ui/Button';
-import { User, Mail, Phone, CreditCard, FileText, Calendar } from 'lucide-react';
+import { User, Mail, Phone, CreditCard, FileText, Calendar, MapPin } from 'lucide-react';
 
 const userSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   email: z.string().email('Invalid email format').max(150),
-  primaryMobile: z.string().regex(/^[6-9]\d{9}$/, 'Must be a valid 10-digit Indian mobile number'),
-  pan: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'Invalid PAN format (e.g. ABCDE1234F)'),
-  aadhaar: z.string().regex(/^\d{12}$/, 'Must be a valid 12-digit Aadhaar number'),
+  primaryMobile: z.string().regex(/^\d{10}$/, 'Must be exactly 10 digits'),
+  secondaryMobile: z.string().regex(/^\d{10}$/, 'Must be exactly 10 digits').optional().or(z.literal('')),
+  pan: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i, 'Invalid PAN format (e.g. ABCDE1234F)'),
+  aadhaar: z.string().regex(/^\d{12}$/, 'Must be exactly 12 digits'),
   dateOfBirth: z.string().optional().refine((val) => {
     if (!val) return true;
     const dob = new Date(val);
     const age = (new Date().getTime() - dob.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
     return age >= 18;
   }, 'User must be at least 18 years old'),
+  placeOfBirth: z.string().min(2, 'Place of birth must be at least 2 characters'),
+  currentAddress: z.string().min(5, 'Address must be at least 5 characters'),
+  permanentAddress: z.string().min(5, 'Address must be at least 5 characters'),
 });
 
 export type UserFormData = z.infer<typeof userSchema>;
@@ -39,9 +44,13 @@ export function UserForm({ defaultValues, onSubmit, isLoading, submitLabel = 'Sa
       name: defaultValues?.name || '',
       email: defaultValues?.email || '',
       primaryMobile: defaultValues?.primaryMobile || '',
+      secondaryMobile: defaultValues?.secondaryMobile || '',
       pan: defaultValues?.pan || '',
       aadhaar: defaultValues?.aadhaar || '',
       dateOfBirth: defaultValues?.dateOfBirth ? new Date(defaultValues.dateOfBirth).toISOString().split('T')[0] : '',
+      placeOfBirth: defaultValues?.placeOfBirth || '',
+      currentAddress: defaultValues?.currentAddress || '',
+      permanentAddress: defaultValues?.permanentAddress || '',
     },
     mode: 'onTouched',
   });
@@ -83,6 +92,20 @@ export function UserForm({ defaultValues, onSubmit, isLoading, submitLabel = 'Sa
             {...register('dateOfBirth')}
             error={errors.dateOfBirth?.message}
           />
+          <Input
+            label="Secondary Mobile (Optional)"
+            placeholder="9876543210"
+            leftIcon={<Phone className="h-4 w-4" />}
+            {...register('secondaryMobile')}
+            error={errors.secondaryMobile?.message}
+          />
+          <Input
+            label="Place of Birth"
+            placeholder="City, State"
+            leftIcon={<MapPin className="h-4 w-4" />}
+            {...register('placeOfBirth')}
+            error={errors.placeOfBirth?.message}
+          />
         </div>
       </div>
 
@@ -106,6 +129,27 @@ export function UserForm({ defaultValues, onSubmit, isLoading, submitLabel = 'Sa
             leftIcon={<FileText className="h-4 w-4" />}
             {...register('aadhaar')}
             error={errors.aadhaar?.message}
+          />
+        </div>
+      </div>
+
+      {/* Section: Addresses */}
+      <div className="space-y-4">
+        <h3 className="font-heading text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2">
+          Addresses
+        </h3>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <Textarea
+            label="Current Address"
+            placeholder="123 Main St..."
+            {...register('currentAddress')}
+            error={errors.currentAddress?.message}
+          />
+          <Textarea
+            label="Permanent Address"
+            placeholder="456 Hometown Rd..."
+            {...register('permanentAddress')}
+            error={errors.permanentAddress?.message}
           />
         </div>
       </div>

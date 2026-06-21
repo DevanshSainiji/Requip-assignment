@@ -16,9 +16,13 @@ export interface User {
   name: string;
   email: string;
   primaryMobile: string;
+  secondaryMobile: string | null;
   pan: string;
   aadhaar: string;
   dateOfBirth: string | null;
+  placeOfBirth: string;
+  currentAddress: string;
+  permanentAddress: string;
   createdAt: string;
   updatedAt: string;
 }

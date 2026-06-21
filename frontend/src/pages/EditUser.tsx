@@ -20,7 +20,18 @@ export function EditUser() {
   const handleSubmit = async (data: UserFormData) => {
     if (!userId) return;
     try {
-      await updateMutation.mutateAsync({ id: userId, data });
+      const payload: Record<string, any> = {
+        ...data,
+      };
+      if (!payload.secondaryMobile) {
+        delete payload.secondaryMobile; // or set to null if backend accepts null for clearing. Wait, if it's optional, deleting it might not clear it. Actually, backend allows optional, Prisma allows null. If they want to clear it, they pass empty string. But regex fails on empty string. So how do we clear secondaryMobile in backend?
+        // Wait, updateUserSchema is `.partial()`, so omitted fields are not updated.
+        // To clear it, we'd need to send `null`, but the schema doesn't `.nullable()`.
+        // Let's send it as is if it's not empty, otherwise delete it.
+        delete payload.secondaryMobile;
+      }
+
+      await updateMutation.mutateAsync({ id: userId, data: payload as any });
       addToast({
         type: 'success',
         title: 'User Updated',

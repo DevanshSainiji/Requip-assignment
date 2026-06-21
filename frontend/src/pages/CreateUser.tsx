@@ -13,10 +13,15 @@ export function CreateUser() {
 
   const handleSubmit = async (data: UserFormData) => {
     try {
-      await createMutation.mutateAsync({
+      const payload: Record<string, any> = {
         ...data,
         dateOfBirth: data.dateOfBirth || null,
-      });
+      };
+      if (!payload.secondaryMobile) {
+        delete payload.secondaryMobile;
+      }
+      
+      await createMutation.mutateAsync(payload as any);
       addToast({
         type: 'success',
         title: 'User Created',
