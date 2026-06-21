@@ -39,7 +39,7 @@ export function CreateUser() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" className="h-10 w-10 p-0 rounded-full" onClick={() => navigate('/users')}>
           <ArrowLeft className="h-5 w-5" />

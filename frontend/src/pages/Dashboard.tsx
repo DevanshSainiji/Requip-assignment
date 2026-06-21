@@ -1,8 +1,7 @@
 import { useUserStats, useUsers } from '@/hooks/useUsers';
 import { StatCard } from '@/components/ui/StatCard';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { Users, UserCheck, UserMinus, Activity } from 'lucide-react';
-import { UserTable } from '@/components/domain/UserTable';
+import { Users, UserCheck, UserMinus, Activity, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 
@@ -31,23 +30,32 @@ export function Dashboard() {
             <StatCard 
               title="Total Users" 
               value={stats.totalUsers} 
-              icon={<Users className="h-5 w-5" />} 
+              subtitle="All time users"
+              icon={<Users className="h-5 w-5" />}
+              iconWrapperClass="bg-copper-100 text-copper-600"
             />
             <StatCard 
               title="Active Users" 
               value={stats.activeUsers} 
+              subtitle="from last 30 days"
               icon={<UserCheck className="h-5 w-5" />} 
-              trend={{ value: 12, isPositive: true }}
+              iconWrapperClass="bg-emerald-100 text-emerald-600"
+              trend={{ value: 12.5, isPositive: true }}
             />
             <StatCard 
               title="Deleted Users" 
               value={stats.deletedUsers} 
+              subtitle="from last 30 days"
               icon={<UserMinus className="h-5 w-5" />} 
+              iconWrapperClass="bg-rose-100 text-rose-600"
+              trend={{ value: 5.2, isPositive: true }}
             />
             <StatCard 
-              title="Recent Joins (30d)" 
+              title="Recent Users" 
               value={stats.recentUsers} 
+              subtitle="Last 30 days"
               icon={<Activity className="h-5 w-5" />} 
+              iconWrapperClass="bg-blue-100 text-blue-600"
             />
           </>
         ) : null}
@@ -55,18 +63,60 @@ export function Dashboard() {
 
       {/* Recent Users Section */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-heading text-xl font-semibold text-slate-900">Recent Users</h2>
-          <Link to="/users">
-            <Button variant="outline" size="sm">View All</Button>
-          </Link>
+        <h2 className="font-heading text-xl font-semibold text-slate-900">Recent Users</h2>
+        
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600">
+              <thead className="bg-slate-50 text-xs font-semibold uppercase text-slate-500">
+                <tr>
+                  <th className="px-6 py-4">Name</th>
+                  <th className="px-6 py-4">Email</th>
+                  <th className="px-6 py-4">Mobile</th>
+                  <th className="px-6 py-4">Created At</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {usersLoading ? (
+                  [...Array(5)].map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan={4} className="px-6 py-4"><Skeleton className="h-6 w-full" /></td>
+                    </tr>
+                  ))
+                ) : recentUsersData?.data && recentUsersData.data.length > 0 ? (
+                  recentUsersData.data.map((user) => (
+                    <tr key={user.id} className="transition-colors hover:bg-slate-50">
+                      <td className="px-6 py-4 font-medium text-slate-900">{user.name}</td>
+                      <td className="px-6 py-4">{user.email}</td>
+                      <td className="px-6 py-4">{user.primaryMobile}</td>
+                      <td className="px-6 py-4">
+                        {new Date(user.createdAt).toLocaleDateString('en-GB', {
+                          day: '2-digit', month: 'short', year: 'numeric',
+                          hour: '2-digit', minute: '2-digit'
+                        })}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                      No users found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
         
-        <UserTable 
-          users={recentUsersData?.data || []} 
-          isLoading={usersLoading} 
-          onDeleteClick={() => {}} 
-        />
+        <div className="flex justify-center pt-4">
+          <Link to="/users">
+            <Button variant="outline" className="group rounded-full px-6 transition-all hover:bg-slate-50 hover:text-copper-600 hover:border-copper-200">
+              View All Users 
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

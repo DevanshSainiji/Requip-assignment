@@ -26,9 +26,10 @@ export function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
           <div className="hidden sm:flex relative w-64">
             <Input
               type="text"
-              placeholder="Search..."
+              placeholder="Search users, email, mobile..."
               leftIcon={<Search className="h-4 w-4" />}
-              className="h-9 rounded-full bg-slate-50 border-slate-200 transition-all focus-visible:bg-white focus-visible:ring-copper-500/20"
+              rightIcon={<kbd className="hidden sm:inline-block rounded border border-slate-200 bg-slate-50 px-1.5 font-mono text-[10px] font-medium text-slate-400">/</kbd>}
+              className="h-10 rounded-xl bg-slate-100/50 border border-slate-200 transition-all hover:bg-slate-100 hover:border-slate-300 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-copper-500/20 focus-visible:border-copper-500 shadow-sm"
             />
           </div>
           

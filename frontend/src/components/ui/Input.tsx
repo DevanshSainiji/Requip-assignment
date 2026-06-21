@@ -31,8 +31,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             className={cn(
               "flex h-11 w-full rounded-xl border border-slate-200 bg-white py-2 text-sm text-slate-900 transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper-500 disabled:cursor-not-allowed disabled:opacity-50",
-              leftIcon ? "pl-10" : "px-4",
-              rightIcon ? "pr-10" : "px-4",
+              leftIcon ? "pl-10" : "pl-4",
+              rightIcon || type === 'date' ? "pr-10" : "pr-4",
               error && "border-rose-500 focus-visible:ring-rose-500",
               className
             )}

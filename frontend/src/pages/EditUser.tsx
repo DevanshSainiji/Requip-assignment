@@ -50,7 +50,7 @@ export function EditUser() {
 
   if (isFetching) {
     return (
-      <div className="mx-auto max-w-3xl space-y-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         <div className="flex items-center gap-4">
           <Skeleton className="h-10 w-10 rounded-full" />
           <div className="space-y-2">
@@ -67,7 +67,7 @@ export function EditUser() {
 
   if (isError || !user) {
     return (
-      <div className="mx-auto max-w-3xl pt-12">
+      <div className="mx-auto max-w-4xl pt-12">
         <EmptyState
           icon={<ArrowLeft className="h-10 w-10" />}
           title="User not found"
@@ -81,7 +81,7 @@ export function EditUser() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" className="h-10 w-10 p-0 rounded-full" onClick={() => navigate('/users')}>
           <ArrowLeft className="h-5 w-5" />

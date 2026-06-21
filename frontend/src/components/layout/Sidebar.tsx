@@ -43,15 +43,20 @@ export function Sidebar({ className }: { className?: string }) {
       </nav>
 
       {/* Footer / Profile mini */}
-      <div className="border-t border-slate-200 p-4">
-        <div className="flex items-center gap-3 rounded-xl p-2 hover:bg-slate-50 transition-colors cursor-pointer">
-          <div className="h-9 w-9 rounded-full bg-slate-900 flex items-center justify-center text-white font-medium text-sm">
-            AD
+      <div className="border-t border-slate-200/80 bg-slate-50/50 p-4">
+        <div className="flex w-full items-center justify-between gap-3 rounded-xl p-2 hover:bg-slate-100 transition-colors cursor-pointer">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-900 text-sm font-medium text-white shadow-sm">
+              AD
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-sm font-semibold text-slate-900">Admin</span>
+              <span className="text-xs text-slate-500 truncate w-[120px]">admin@requip.com</span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold text-slate-900">Admin</span>
-            <span className="text-xs text-slate-500">admin@requip.com</span>
-          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
         </div>
       </div>
     </aside>

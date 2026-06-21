@@ -13,7 +13,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center rounded-xl font-medium transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none disabled:scale-100';
     
     const variants = {
-      primary: 'bg-copper-500 text-white hover:bg-copper-600 shadow-sm focus-visible:ring-copper-500',
+      primary: 'bg-copper-500 text-white hover:bg-copper-600 shadow-sm hover:shadow-copper-500/20 hover:-translate-y-[1px] focus-visible:ring-copper-500',
       secondary: 'bg-slate-900 text-white hover:bg-slate-800 shadow-sm focus-visible:ring-slate-900',
       outline: 'border-2 border-slate-200 bg-transparent hover:bg-slate-50 text-slate-900 focus-visible:ring-slate-500',
       ghost: 'bg-transparent hover:bg-slate-100 text-slate-700 focus-visible:ring-slate-500',
