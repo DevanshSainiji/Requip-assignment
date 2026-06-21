@@ -40,9 +40,11 @@ app.use(helmet({ contentSecurityPolicy: false }));
 
 // CORS — only the Vite dev server origin is allowed during development.
 // In production, replace CLIENT_URL with your deployed frontend domain.
+const clientUrl = process.env.CLIENT_URL?.replace(/\/$/, '') || 'http://localhost:5173';
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: clientUrl,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
   }),
