@@ -20,7 +20,7 @@ export function EditUser() {
   const handleSubmit = async (data: UserFormData) => {
     if (!userId) return;
     try {
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         ...data,
       };
       if (!payload.secondaryMobile) {
@@ -31,7 +31,7 @@ export function EditUser() {
         delete payload.secondaryMobile;
       }
 
-      await updateMutation.mutateAsync({ id: userId, data: payload as any });
+      await updateMutation.mutateAsync({ id: userId, data: payload as unknown as Parameters<typeof updateMutation.mutateAsync>[0]['data'] });
       addToast({
         type: 'success',
         title: 'User Updated',
