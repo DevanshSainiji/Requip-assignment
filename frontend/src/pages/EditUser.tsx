@@ -97,6 +97,7 @@ export function EditUser() {
           defaultValues={{
             ...user,
             dateOfBirth: user.dateOfBirth || undefined,
+            secondaryMobile: user.secondaryMobile || undefined,
           }}
           onSubmit={handleSubmit} 
           isLoading={updateMutation.isPending} 
