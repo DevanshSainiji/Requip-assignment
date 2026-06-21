@@ -1,0 +1,51 @@
+// Prisma auto-generates the type-safe client from this schema.
+// Run `npm run prisma:generate` after any schema change.
+// Run `npm run prisma:migrate` to apply changes to the database.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+}
+
+model User {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  // ── Contact ────────────────────────────────────────────
+  email           String  @unique
+  primaryMobile   String
+  secondaryMobile String? // Optional — not every user has a secondary number
+
+  // ── Identity ───────────────────────────────────────────
+  aadhaar String   @unique // 12-digit government ID
+  pan     String   @unique // Format: ABCDE1234F
+
+  // ── Personal ───────────────────────────────────────────
+  dateOfBirth  DateTime @db.Date // Store only date, not time
+  placeOfBirth String
+
+  // ── Addresses ──────────────────────────────────────────
+  currentAddress   String @db.Text // Text to allow long addresses
+  permanentAddress String @db.Text
+
+  // ── Timestamps ─────────────────────────────────────────
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // null = active user; timestamp = soft-deleted
+
+  // ── Indexes ─────────────────────────────────────────────────────
+  // NOTE: email, aadhaar, pan are NOT manually indexed here.
+  // Prisma's @unique constraint automatically creates a B-tree index on each —
+  // adding a manual @@index on top would just create a duplicate.
+  //
+  // This composite index covers our most common query:
+  //   SELECT * FROM users WHERE deletedAt IS NULL ORDER BY createdAt DESC LIMIT ? OFFSET ?
+  // MySQL uses the index for the filter + can leverage it for the sort.
+  @@index([deletedAt, createdAt])
+
+  @@map("users") // Explicit table name — avoids Prisma's PascalCase default
+}

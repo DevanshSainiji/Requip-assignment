@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+
+    // Strictness
+    "strict": true,
+    "noUncheckedIndexedAccess": true,   // arr[0] is T | undefined, not T — catches index bugs
+    "noImplicitReturns": true,           // every code path in a function must return a value
+
+    // Interop
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+
+    // Output
+    "declaration": true,
+    "sourceMap": true
+    // NOTE: no `baseUrl` — we have no path aliases, and baseUrl alone
+    // causes surprising module resolution behaviour with ts-node.
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/tests"]
+}
