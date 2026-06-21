@@ -42,6 +42,24 @@ export class UserController {
   };
 
   /**
+   * GET /api/v1/users/:id
+   * Fetch a single active user by ID.
+   */
+  getOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const id = parseId(req.params['id']);
+      if (id === null) {
+        sendError(res, 'Invalid user ID', 400);
+        return;
+      }
+      const user = await userService.getUserById(id);
+      sendSuccess(res, user, 'User fetched successfully');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
    * PUT /api/v1/users/:id
    * Update an existing user.
    */

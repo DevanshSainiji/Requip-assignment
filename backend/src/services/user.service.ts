@@ -24,6 +24,18 @@ export class UserService {
   }
 
   /**
+   * Fetch a single active user by ID.
+   * Returns NotFoundError if the user doesn't exist or is soft-deleted.
+   */
+  async getUserById(id: number): Promise<User> {
+    const user = await userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    return user;
+  }
+
+  /**
    * Retrieve a paginated list of active users with pagination metadata.
    * Explicit return type ensures the controller knows the exact shape.
    */
