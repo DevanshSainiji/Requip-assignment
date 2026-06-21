@@ -1,5 +1,7 @@
+import { User } from '@prisma/client';
 import { userRepository } from '../repositories/user.repository';
-import { CreateUserInput, UpdateUserInput, UserRecord } from '../types';
+import { CreateUserInput, UpdateUserInput } from '../validations/user.validation';
+import { GetUsersResult } from '../types';
 import { NotFoundError } from '../utils/AppError';
 
 /**
@@ -12,60 +14,65 @@ import { NotFoundError } from '../utils/AppError';
 export class UserService {
   /**
    * Create a new user.
-   * Unique constraints (email, aadhaar, pan) are enforced by the database,
-   * and any violations will throw a P2002 error caught by the global error handler.
+   *
+   * Unique constraints (email, aadhaar, pan) are enforced at the DB level.
+   * A duplicate will cause Prisma to throw a P2002 error, which the global
+   * error handler converts to a 409 Conflict response.
    */
-  async createUser(data: CreateUserInput): Promise<UserRecord> {
+  async createUser(data: CreateUserInput): Promise<User> {
     return userRepository.create(data);
   }
 
   /**
-   * Retrieve a paginated list of users, including pagination metadata.
+   * Retrieve a paginated list of active users with pagination metadata.
+   * Explicit return type ensures the controller knows the exact shape.
    */
-  async getUsers(page: number, limit: number, search?: string) {
+  async getUsers(page: number, limit: number, search?: string): Promise<GetUsersResult> {
     const { data, total } = await userRepository.findPaginated(page, limit, search);
-    const totalPages = Math.ceil(total / limit);
+
+    // Avoid dividing by zero on an unlikely but theoretically possible limit of 0
+    const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
 
     return {
       data,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages,
-      },
+      pagination: { page, limit, total, totalPages },
     };
   }
 
   /**
    * Update an existing user.
-   * If the user doesn't exist or is soft-deleted, throws NotFoundError.
+   *
+   * We do an explicit existence check (findById) before updating so we
+   * can return a clean 404 rather than relying solely on Prisma's P2025.
+   * The DB-level unique constraints still guard against duplicate email/PAN/Aadhaar.
+   *
+   * NOTE (TOCTOU): There is a theoretical race condition between findById and
+   * update — another request could delete the user in that window. If it does,
+   * Prisma throws P2025 which our error handler already maps to a 404. Acceptable
+   * for this scope; full mitigation requires optimistic concurrency (version field).
    */
-  async updateUser(id: number, data: UpdateUserInput): Promise<UserRecord> {
-    // 1. Verify existence and active status
+  async updateUser(id: number, data: UpdateUserInput): Promise<User> {
     const existing = await userRepository.findById(id);
     if (!existing) {
       throw new NotFoundError('User not found');
     }
 
-    // 2. Perform update
-    // Uniqueness of email/aadhaar/pan is still guarded by DB constraints
     return userRepository.update(id, data);
   }
 
   /**
-   * Soft delete a user by setting their deletedAt timestamp.
-   * Throws NotFoundError if the user is already deleted or missing.
+   * Soft delete a user by setting deletedAt.
+   *
+   * Uses the repository's atomic softDelete (updateMany with deletedAt IS NULL guard)
+   * to avoid the TOCTOU window: if the user was already deleted between our check
+   * and the update, the count will be 0 and we throw NotFoundError.
    */
   async deleteUser(id: number): Promise<void> {
-    // 1. Verify existence
-    const existing = await userRepository.findById(id);
-    if (!existing) {
+    const affected = await userRepository.softDelete(id);
+
+    if (affected === 0) {
       throw new NotFoundError('User not found');
     }
-
-    // 2. Soft delete
-    await userRepository.softDelete(id);
   }
 }
 

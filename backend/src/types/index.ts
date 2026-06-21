@@ -1,16 +1,19 @@
 /**
  * Shared TypeScript types used across controllers, services, and repositories.
  *
- * Keeping types in one place avoids circular imports and gives
- * a single source of truth for any interviewer reading the code.
+ * Design rules:
+ * - CreateUserInput / UpdateUserInput live in user.validation.ts (derived via z.infer
+ *   so they're always in sync with the Zod schema — no manual duplication).
+ * - UserRecord re-exports Prisma's generated User type so the rest of the codebase
+ *   never imports @prisma/client directly, giving us one place to change if we
+ *   ever swap ORMs.
  */
 
-// ─── Pagination ────────────────────────────────────────────────────────────────
+// ── Re-export Prisma's generated type ─────────────────────────────────────────
+// Prisma generates this from schema.prisma; `prisma generate` keeps it up to date.
+export { User as UserRecord } from '@prisma/client';
 
-export interface PaginationParams {
-  page: number;
-  limit: number;
-}
+// ── Pagination ─────────────────────────────────────────────────────────────────
 
 export interface PaginationMeta {
   page: number;
@@ -19,69 +22,22 @@ export interface PaginationMeta {
   totalPages: number;
 }
 
-// ─── API response envelopes ───────────────────────────────────────────────────
+// ── Service return shapes ──────────────────────────────────────────────────────
 
-export interface SuccessResponse<T> {
-  success: true;
-  message: string;
-  data: T;
-  pagination?: PaginationMeta;
+import { User } from '@prisma/client';
+
+/**
+ * What UserService.getUsers() returns.
+ * Exported so tests can type their expected values without duplication.
+ */
+export interface GetUsersResult {
+  data: User[];
+  pagination: PaginationMeta;
 }
 
-export interface ErrorResponse {
-  success: false;
-  message: string;
-  errors?: FieldError[];
-}
+// ── API error field ────────────────────────────────────────────────────────────
 
 export interface FieldError {
   field: string;
   message: string;
 }
-
-// ─── User ─────────────────────────────────────────────────────────────────────
-
-/**
- * The shape of a User as returned from the database (Prisma includes all fields).
- * We use Prisma's generated type in most places, but this is useful for
- * defining function signatures without importing from @prisma/client everywhere.
- */
-export interface UserRecord {
-  id: number;
-  name: string;
-  email: string;
-  primaryMobile: string;
-  secondaryMobile: string | null;
-  aadhaar: string;
-  pan: string;
-  dateOfBirth: Date;
-  placeOfBirth: string;
-  currentAddress: string;
-  permanentAddress: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
-}
-
-/**
- * Input type for creating a user — all required fields.
- * Mirrors the Zod schema output for createUserSchema.
- */
-export interface CreateUserInput {
-  name: string;
-  email: string;
-  primaryMobile: string;
-  secondaryMobile?: string;
-  aadhaar: string;
-  pan: string;
-  dateOfBirth: Date;
-  placeOfBirth: string;
-  currentAddress: string;
-  permanentAddress: string;
-}
-
-/**
- * Input type for updating a user — all fields optional.
- * Mirrors the Zod schema output for updateUserSchema.
- */
-export type UpdateUserInput = Partial<CreateUserInput>;

@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import userRoutes from './user.routes';
+import { sendSuccess } from '../utils/apiResponse';
 
 /**
  * v1 Router — root of the /api/v1 namespace.
@@ -39,11 +40,7 @@ router.use('/users', userRoutes);
  *                   format: date-time
  */
 router.get('/health', (_req: Request, res: Response) => {
-  res.json({
-    success: true,
-    message: 'API is healthy',
-    timestamp: new Date().toISOString(),
-  });
+  sendSuccess(res, { timestamp: new Date().toISOString() }, 'API is healthy');
 });
 
 export default router;
